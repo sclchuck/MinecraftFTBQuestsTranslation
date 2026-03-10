@@ -1,0 +1,33 @@
+name: Build FTBQuestTranslator EXE
+
+on:
+  workflow_dispatch:   # 手动触发
+  push:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 设置 Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: 安装依赖
+      run: |
+        pip install --upgrade pip
+        pip install pyinstaller wxPython openai requests tiktoken
+
+    - name: PyInstaller 打包
+      run: pyinstaller --onedir --windowed --name FTBQuestTranslator --clean --hidden-import=openai --hidden-import=wx --hidden-import=wx._html --hidden-import=wx._xml --hidden-import=wx._adv --hidden-import=tiktoken --collect-all wx --add-data "key2lang.py;." mc_ftbquest_trans.py
+
+    - name: 上传 EXE
+      uses: actions/upload-artifact@v4
+      with:
+        name: FTBQuestTranslator-Windows
+        path: dist/FTBQuestTranslator
+        retention-days: 7
