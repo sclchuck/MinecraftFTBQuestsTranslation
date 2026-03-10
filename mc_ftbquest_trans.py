@@ -593,6 +593,19 @@ class JsonTranslateParallelGUI(wx.Frame):
         return remapped
 
 if __name__ == '__main__':
+    import sys
+    import os
+
+    # ==================== 打包后路径兼容 ====================
+    if getattr(sys, 'frozen', False):
+        # exe 运行时，工作目录切换到 exe 所在文件夹
+        application_path = os.path.dirname(sys.executable)
+    else:
+        # 正常 python 运行
+        application_path = os.path.dirname(os.path.abspath(__file__))
+
+    os.chdir(application_path)  # 强制工作目录正确
+    # ====================================================
     app = wx.App(False)
     frame = JsonTranslateParallelGUI()
     app.MainLoop()
